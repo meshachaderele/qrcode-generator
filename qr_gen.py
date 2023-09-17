@@ -13,31 +13,41 @@ qr = qrcode.QRCode(
 
 def createqr():
     # Data to be encoded in the QR code
-    data = st.text_input("Enter what you want a QR Code for:")
+    data = st.text_input("Enter what you want a QR Code for:", placeholder= "Link, text, email, phone number etc.")
     # Add data to the QR code instance
     qr.clear()  # Clear the QR code data in case this function is called multiple times
-    qr.add_data(data)
-    qr.make(fit=True)
+    
+    
     
     create = st.button("Create QRcode")
+
     if create:
-        # Create an image from the QR code instance
-        img = qr.make_image(fill_color="black", back_color="white")
+        if not data:
+            st.warning("Please enter what you want a QR Code for")
+        else:
+            qr.add_data(data)
+            qr.make(fit=True)
+            # Create an image from the QR code instance
+            img = qr.make_image(fill_color="black", back_color="white")
+             # Display the image in Streamlit
+            # Save the image to a BytesIO object
+            img_bytes_io = BytesIO()
+            img.save(img_bytes_io, format="PNG")
+            st.image(img_bytes_io)
 
-        # Display the image in Streamlit
-         # Save the image to a BytesIO object
-        img_bytes_io = BytesIO()
-        img.save(img_bytes_io, format="PNG")
-        st.image(img_bytes_io)
+            # Download the image
+            timestamp = int(time.time())
+            image_filename = f"my_qr_code_{timestamp}.png"
 
-        # Download the image
-        timestamp = int(time.time())
-        image_filename = f"my_qr_code_{timestamp}.png"
+        
+
+            # Create a download button for the image
+            st.download_button("Download QRcode", img_bytes_io.getvalue(), file_name=image_filename)
+        
+        
+        
 
        
-
-        # Create a download button for the image
-        st.download_button("Download QRcode", img_bytes_io.getvalue(), file_name=image_filename)
 
 #if __name__ == "__main__":
     #createqr()
